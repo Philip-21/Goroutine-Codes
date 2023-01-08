@@ -5,7 +5,9 @@ import (
 	"sync"
 )
 
-// race is ued in this exampe to access the data safely
+// mutex is used in this example to access the data safely
+// it prevents go updateMessage("Hello, universe", &mutex)
+// go updateMessage("hello, cosmos", &mutex) from acccesing the dta msg simultaneously
 var msg string
 var wg sync.WaitGroup
 
@@ -28,5 +30,5 @@ func main() {
 	fmt.Println(msg)
 }
 
-//type go run -race .  to check if it executes well
+//type go run -race .  to check if it executes well and if there is no data race
 //it prints out the data without showing error
