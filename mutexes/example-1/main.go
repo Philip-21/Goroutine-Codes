@@ -7,7 +7,7 @@ import (
 
 // mutex is used in this example to access the data safely
 // it prevents go updateMessage("Hello, universe", &mutex)
-// go updateMessage("hello, cosmos", &mutex) from acccesing the dta msg simultaneously
+// go updateMessage("hello, cosmos", &mutex) from acccesing the data msg simultaneously
 var msg string
 var wg sync.WaitGroup
 

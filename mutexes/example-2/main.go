@@ -18,6 +18,8 @@ func main() {
 	//variable for bank balance
 	var bankBalance int
 
+	var balance sync.Mutex
+
 	//print out starting values
 	fmt.Printf("Initial account balance: $%d.00", bankBalance)
 	fmt.Println()
@@ -38,9 +40,11 @@ func main() {
 			defer wg.Done()
 			//loop through all 52 weeks
 			for week := 1; week <= 52; week++ {
+				balance.Lock()
 				temp := bankBalance   //current bank balance
 				temp += income.Amount //add to the current income for the current week
 				bankBalance = temp    //add temp to the bank balance
+				balance.Unlock()
 				fmt.Printf("On Week %d, you earned $%d.00 from %s\n", week,
 					income.Amount, income.Source)
 			}
