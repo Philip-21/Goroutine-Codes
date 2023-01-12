@@ -49,9 +49,14 @@ func main() {
 func diningProblem(philosopher Philosopher, wg *sync.WaitGroup, forks map[int]*sync.Mutex, seated *sync.WaitGroup) {
 	defer wg.Done() ///tells the goroutines its done and decrements by 1
 
-	//seat the philosopher at the table
+	// seat the philosopher at the table
 	fmt.Printf("%s is seated at the table.\n", philosopher.name)
-	seated.Done() //waitgroup decrements by 1
+
+	// Decrement the seated WaitGroup by one.
+	seated.Done()
+
+	// Wait until everyone is seated.
+	seated.Wait()
 
 	// Have this philosopher eatTime and thinkTime "hunger" times (3).
 	for i := hunger; i > 0; i-- {
@@ -93,6 +98,11 @@ func diningProblem(philosopher Philosopher, wg *sync.WaitGroup, forks map[int]*s
 }
 
 func dine() {
+	//to speed things up
+	eatTime = 0 * time.Second
+	sleepTime = 0 * time.Second
+	thinkTime = 0 * time.Second
+
 	// wg is the WaitGroup that keeps track of how many philosophers are still at the table. When
 	// it reaches zero, everyone is finished eating and has left. We add 5 (the number of philosophers) to this
 	// wait group.
