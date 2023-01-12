@@ -6,8 +6,8 @@ import (
 )
 
 func printSomething(s string, wg *sync.WaitGroup) {
-
-	defer wg.Done() //defer deosnt exec until the func exits (it decements by 1)
+	// Schedule the call to WaitGroup's Done to tell goroutine is completed.
+	defer wg.Done() //defer doesnt exec until the func exits (it decrements by 1)
 	fmt.Println(s)
 }
 
@@ -23,15 +23,14 @@ func main() {
 		"Epselon",
 		"theta",
 	}
-	wg.Add(len(words))
+	wg.Add(len(words)) //ading counters for the goroutine
 
 	for i, x := range words {
 		go printSomething(fmt.Sprintf("%d:, %s", i, x), &wg)
 	}
-	wg.Wait() //fetches data starting from the 1st index(0)
+	wg.Wait() //waits for the goroutine to exec until the counter hits 0
 
-	wg.Add(1) //adding an item as it fetches to make the program execute
-
+	wg.Add(1) //adding  a count of 1 for a goroutine
 	printSomething("this is what is printed", &wg)
 
 }
