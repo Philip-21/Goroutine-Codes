@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 )
@@ -12,6 +13,9 @@ type Philosopher struct {
 	rightFork int
 	leftFork  int
 }
+
+var orderMutex sync.Mutex  // a mutex for the slice orderFinished
+var orderFinished []string // the order in which philosophers finish dining and leave
 
 // list of all philosophers.
 var philosophers = []Philosopher{
@@ -39,6 +43,9 @@ func main() {
 
 	// print out finished message
 	fmt.Println("The table is empty.")
+
+	time.Sleep(sleepTime)
+	fmt.Printf("Order finished: %s.\n", strings.Join(orderFinished, ", "))
 
 }
 
@@ -95,6 +102,11 @@ func diningProblem(philosopher Philosopher, wg *sync.WaitGroup, forks map[int]*s
 	// The philosopher has finished eating, so print out a message.
 	fmt.Println(philosopher.name, "is satisified.")
 	fmt.Println(philosopher.name, "left the table.")
+
+	//displaying those who have finished eating orderly
+	orderMutex.Lock()
+	orderFinished = append(orderFinished, philosopher.name)
+	orderMutex.Unlock()
 }
 
 func dine() {
