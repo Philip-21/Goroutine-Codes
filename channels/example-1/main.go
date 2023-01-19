@@ -32,10 +32,10 @@ func main() {
 		fmt.Print("->")
 		//get user input
 		var userinput string
-		//accepting user inputs omly in uppercase
+		//accepting user inputs and prints them in uppercase
 		_, _ = fmt.Scanln(&userinput)
 		if userinput == strings.ToLower("q") {
-			break //quit
+			break //quit the program by clixking q
 		}
 
 		//send data to ping channel,then ping receives the data userinput )
