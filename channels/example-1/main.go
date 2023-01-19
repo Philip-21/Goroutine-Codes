@@ -38,10 +38,10 @@ func main() {
 			break //quit
 		}
 
-		//send data to ping channel(ping  receivin the data userinput )
+		//send data to ping channel,then ping receives the data userinput )
 		ping <- userinput
 		//wait on the response
-		response := <-pong //(pong receives the data from ping , then sends the data to the channel)
+		response := <-pong //(pong receives the data from ping with var response, then sends the data to the channel)
 		fmt.Println("Response", response)
 
 	}
