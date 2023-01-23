@@ -10,7 +10,7 @@ func shout(ping <-chan string, pong chan<- string) {
 	defer wg.Done()
 	for {
 		//accept a value from ping
-		s := <-ping //ping receives from the channel
+		s := <-ping //ping receives from the channel stored in a variable s
 
 		///pong sends data to the channel received from ping defined with the variable s
 		pong <- fmt.Sprintf("%s!!", strings.ToUpper(s))

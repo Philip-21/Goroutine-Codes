@@ -36,6 +36,7 @@ func main() {
 	}
 	color.Green("The Shop is Open for the day!")
 	// add barbers
+	shop.addBarber("Frank")
 
 	// start the barbershop as a goroutine
 
