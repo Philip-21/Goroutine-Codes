@@ -62,3 +62,36 @@ func (shop *BarberShop) sendBarberHome(barber string) {
 	color.Cyan("%s is going home ", barber)
 	shop.BabersDoneChan <- true
 }
+
+func (shop *BarberShop) closeShopForDay() {
+	color.Cyan("Closing shop for the day")
+
+	close(shop.ClientsChan)
+	shop.Open = false
+
+	//wait until all barbers are done
+	//blocks until every single barber is done
+	for a := 1; a <= shop.NumberOfBabers; a++ {
+		<-shop.BabersDoneChan
+	}
+	close(shop.BabersDoneChan)
+
+	color.Green("Barbers shop closed for the day , everyone has gone home")
+
+}
+
+func (shop *BarberShop) addClient(client string) {
+	color.Green("%s arrives", client)
+
+	if shop.Open {
+		select {
+		case shop.ClientsChan <- client:
+			color.Yellow("%s takes a seat in the waiting room", client)
+		default: //default avoid deadlock (when a  goroutine stops running)
+			color.Red("The waiting rom is full, so %s leaves", client)
+		}
+	} else {
+		color.Red("The Shop is already closed, so %s leaves!", client)
+
+	}
+}
