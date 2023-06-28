@@ -1,4 +1,4 @@
-
+#### Mutex
 A Repo for using Mutexes in a goroutine
 
 - Mutex(mutual exclusion) allows us deal with race conditions
