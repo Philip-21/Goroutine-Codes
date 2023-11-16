@@ -109,7 +109,7 @@ func main() {
 	seatingCapacity := 10
 	arrivalRate := 100
 	cutDuration := 20000 * time.Millisecond
-	timeOpen := 10 * time.Second
+	timeOpen := 60 * time.Second
 	clientChan := make(chan string, seatingCapacity)
 	doneChan := make(chan bool)
 
@@ -133,7 +133,7 @@ func main() {
 	shopClosing := make(chan bool)
 	closed := make(chan bool)
 	go func() {
-		//make the goroutine open for a particular time
+		//Open the shop for the day 
 		<-time.After(timeOpen)
 		shopClosing <- true
 		//Closing the shop for the day
@@ -147,7 +147,7 @@ func main() {
 
 	go func() {
 		for {
-			//get a random number wit average arrival rate
+			//get a random number with average arrival rate
 			randomMilliSeconds := rand.Int() % (12 * arrivalRate)
 			select {
 			case <-shopClosing:
