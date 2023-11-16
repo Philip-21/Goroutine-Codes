@@ -16,18 +16,18 @@ type BarberShop struct {
 }
 
 func (shop *BarberShop) cutHair(barber, client string) {
-	fmt.Printf("%s is cutting %s's hair", barber, client)
+	fmt.Printf("%s is cutting %s's hair \n", barber, client)
 	time.Sleep(shop.HairCutDuration)
-	fmt.Printf("%s is finished cutting %s's hair.", barber, client)
+	fmt.Printf("%s is finished cutting %s's hair. \n", barber, client)
 }
 
 func (shop *BarberShop) sendBarberHome(barber string) {
-	fmt.Printf("%s is going home ", barber)
+	fmt.Printf("%s is going home \n", barber)
 	shop.BabersDoneChan <- true
 }
 
 func (shop *BarberShop) closeShopForDay() {
-	fmt.Printf("Closing shop for the day")
+	fmt.Printf("Closing shop for the day \n")
 
 	close(shop.ClientsChan)
 	shop.Open = false
@@ -39,7 +39,7 @@ func (shop *BarberShop) closeShopForDay() {
 	}
 	close(shop.BabersDoneChan)
 
-	fmt.Printf("Barbers shop closed for the day , everyone has gone home")
+	fmt.Printf("Barbers shop closed for the day , everyone has gone home \n")
 
 }
 
@@ -49,12 +49,12 @@ func (shop *BarberShop) addBarber(Barber string) {
 
 	go func() {
 		isSleeping := false
-		fmt.Printf("%s goes to waiting room to check for clients ", Barber)
+		fmt.Printf("%s goes to waiting room to check for clients \n", Barber)
 
 		for {
 			//if there are no clients , the barber goes to sleep
 			if len(shop.ClientsChan) == 0 {
-				fmt.Printf("There are no clients, so %s takes a nap", Barber)
+				fmt.Printf("There are no clients, so %s takes a nap \n", Barber)
 				isSleeping = true
 			}
 			//keep listening to the channel
@@ -64,7 +64,7 @@ func (shop *BarberShop) addBarber(Barber string) {
 			if shopOpen {
 				if isSleeping {
 					//customer wakes baber up if hes sleeping
-					fmt.Printf("%s wakes %s up", client, Barber)
+					fmt.Printf("%s wakes %s up \n", client, Barber)
 					isSleeping = false
 				}
 				//cut hair
@@ -86,12 +86,12 @@ func (shop *BarberShop) addClient(client string) {
 	if shop.Open {
 		select {
 		case shop.ClientsChan <- client:
-			fmt.Printf("%s takes a seat in the waiting room", client)
+			fmt.Printf("%s takes a seat in the waiting room \n", client)
 		default: //default avoid deadlock (when a  goroutine stops running)
-			fmt.Printf("The waiting rom is full, so %s leaves", client)
+			fmt.Printf("The waiting rom is full, so %s leaves \n", client)
 		}
 	} else {
-		fmt.Printf("The Shop is already closed, so %s leaves!", client)
+		fmt.Printf("The Shop is already closed, so %s leaves! \n", client)
 
 	}
 }
@@ -108,7 +108,7 @@ func main() {
 	rand.NewSource(time.Now().UnixNano())
 
 	// print welcome message
-	fmt.Printf("The Sleeping Barber Problem")
+	fmt.Printf("The Sleeping Barber Problem \n")
 
 	// create channels if we need any
 	clientChan := make(chan string, seatingCapacity) //a buffered channel
@@ -122,7 +122,7 @@ func main() {
 		BabersDoneChan:  doneChan,
 		Open:            true,
 	}
-	fmt.Printf("The Shop is Open for the day!")
+	fmt.Printf("The Shop is Open for the day! \n")
 	// add barbers
 	shop.addBarber("Frank")
 	shop.addBarber("Harry")
