@@ -4,9 +4,97 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
-
-	"github.com/fatih/color"
 )
+
+type BarberShop struct {
+	ShopCapacity    int
+	HairCutDuration time.Duration
+	NumberOfBabers  int
+	BabersDoneChan  chan bool
+	ClientsChan     chan string
+	Open            bool
+}
+
+func (shop *BarberShop) cutHair(barber, client string) {
+	fmt.Printf("%s is cutting %s's hair", barber, client)
+	time.Sleep(shop.HairCutDuration)
+	fmt.Printf("%s is finished cutting %s's hair.", barber, client)
+}
+
+func (shop *BarberShop) sendBarberHome(barber string) {
+	fmt.Printf("%s is going home ", barber)
+	shop.BabersDoneChan <- true
+}
+
+func (shop *BarberShop) closeShopForDay() {
+	fmt.Printf("Closing shop for the day")
+
+	close(shop.ClientsChan)
+	shop.Open = false
+
+	//wait until all barbers are done
+	//blocks until every single barber is done
+	for a := 1; a <= shop.NumberOfBabers; a++ {
+		<-shop.BabersDoneChan
+	}
+	close(shop.BabersDoneChan)
+
+	fmt.Printf("Barbers shop closed for the day , everyone has gone home")
+
+}
+
+func (shop *BarberShop) addBarber(Barber string) {
+	//add a barber to the shop evrytime the func is callled
+	shop.NumberOfBabers++
+
+	go func() {
+		isSleeping := false
+		fmt.Printf("%s goes to waiting room to check for clients ", Barber)
+
+		for {
+			//if there are no clients , the barber goes to sleep
+			if len(shop.ClientsChan) == 0 {
+				fmt.Printf("There are no clients, so %s takes a nap", Barber)
+				isSleeping = true
+			}
+			//keep listening to the channel
+			//get client from room when someone arrives
+			client, shopOpen := <-shop.ClientsChan
+			//shopOpen returns a bool value(standard way to check if the value received from the channel was sent to the channel)
+			if shopOpen {
+				if isSleeping {
+					//customer wakes baber up if hes sleeping
+					fmt.Printf("%s wakes %s up", client, Barber)
+					isSleeping = false
+				}
+				//cut hair
+				shop.cutHair(Barber, client)
+			} else {
+				//shop is closed, so send the barber Home and close th goroutine
+				shop.sendBarberHome(Barber)
+				return //closes the goroutine
+			}
+
+		}
+
+	}()
+}
+
+func (shop *BarberShop) addClient(client string) {
+	fmt.Printf("%s arrives", client)
+
+	if shop.Open {
+		select {
+		case shop.ClientsChan <- client:
+			fmt.Printf("%s takes a seat in the waiting room", client)
+		default: //default avoid deadlock (when a  goroutine stops running)
+			fmt.Printf("The waiting rom is full, so %s leaves", client)
+		}
+	} else {
+		fmt.Printf("The Shop is already closed, so %s leaves!", client)
+
+	}
+}
 
 // variables
 var seatingCapacity = 10
@@ -17,11 +105,10 @@ var timeOpen = 10 * time.Second
 func main() {
 	// seed our random number generator used with the arrivalRate
 	//so clients dont arrive at the same interval
-	rand.Seed(time.Now().UnixNano())
+	rand.NewSource(time.Now().UnixNano())
 
 	// print welcome message
-	color.Yellow("The Sleeping Barber Problem")
-	color.Yellow("-------------------------")
+	fmt.Printf("The Sleeping Barber Problem")
 
 	// create channels if we need any
 	clientChan := make(chan string, seatingCapacity) //a buffered channel
@@ -35,7 +122,7 @@ func main() {
 		BabersDoneChan:  doneChan,
 		Open:            true,
 	}
-	color.Green("The Shop is Open for the day!")
+	fmt.Printf("The Shop is Open for the day!")
 	// add barbers
 	shop.addBarber("Frank")
 	shop.addBarber("Harry")
