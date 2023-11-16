@@ -96,23 +96,23 @@ func (shop *BarberShop) addClient(client string) {
 	}
 }
 
-// variables
-var seatingCapacity = 10
-var arrivalRate = 100
-var cutDuration = 1000 * time.Millisecond
-var timeOpen = 10 * time.Second
-
+//Testing things out
 func main() {
-	// seed our random number generator used with the arrivalRate
-	//so clients dont arrive at the same interval
+
+	//random number generator used with the arrivalRate so clients
+	// dont arrive at the same interval
 	rand.NewSource(time.Now().UnixNano())
 
-	// print welcome message
 	fmt.Printf("The Sleeping Barber Problem \n")
 
-	// create channels if we need any
-	clientChan := make(chan string, seatingCapacity) //a buffered channel
+	//variable setup to define objects and  parameters
+	seatingCapacity := 10
+	arrivalRate := 100
+	cutDuration := 20000 * time.Millisecond
+	timeOpen := 10 * time.Second
+	clientChan := make(chan string, seatingCapacity)
 	doneChan := make(chan bool)
+
 	// create the barbershop
 	shop := BarberShop{
 		ShopCapacity:    seatingCapacity,
